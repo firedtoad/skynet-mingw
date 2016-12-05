@@ -127,3 +127,10 @@ int fcntl(int fd, int cmd, long arg) {
   
   return 1;
 }
+int nusleep(unsigned long ul)
+{
+  struct timespec req={0,ul*1000};
+  while(nanosleep(&req,&req)==-1&&errno==EINTR)
+      continue;
+  return 0;
+}

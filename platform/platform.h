@@ -3,7 +3,8 @@
 
 #include <unistd.h>
 #include <stdbool.h>
-#include "sys/socket.h"
+#include <sys/socket.h> 
+#include <time.h>
 
 #define HAVE_STRUCT_TIMESPEC
 
@@ -74,7 +75,7 @@ int recv_extend_errno(SOCKET s, char* buffer, int sz, int flag);
 int getsockopt_extend_voidptr(SOCKET s, int level, int optname, void* optval, int* optlen);
 int setsockopt_extend_voidptr(SOCKET s, int level, int optname, const void* optval, int optlen);
 int recvfrom_extend_voidptr(SOCKET s, void* buf, int len, int flags, struct sockaddr* from, int* fromlen);
-
+int nusleep(unsigned long ul);
 #ifndef DONOT_USE_IO_EXTEND
 #define write(fd, ptr, sz) write_extend_socket(fd, ptr, sz)
 #define read(fd, ptr, sz)  read_extend_socket(fd, ptr, sz)

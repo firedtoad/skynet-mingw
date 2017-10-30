@@ -3,7 +3,7 @@ CSERVICE_PATH ?= cservice
 SKYNET_DEFINES :=-DNOUSE_JEMALLOC -DFD_SETSIZE=4096
 
 CC = gcc -std=gnu99
-PLAT ?= mingw
+PLAT = cygwin
 
 SKYNET_BUILD_PATH ?= .
 

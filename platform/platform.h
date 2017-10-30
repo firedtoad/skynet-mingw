@@ -1,7 +1,8 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
-
+#define __USE_W32_SOCKETS
+#define WIN32_LEAN_AND_MEAN
 #include <unistd.h>
 #include <stdbool.h>
 #include "sys/socket.h"
@@ -11,21 +12,21 @@
 /*<signal.h>*/
 #define	SIGHUP	1
 #define SA_RESTART	0x0002
-struct sigaction {
-	void (*sa_handler)(int);
-	sigset_t sa_mask;              
-    int sa_flags;    
-};
+//struct sigaction {
+//	void (*sa_handler)(int);
+//	sigset_t sa_mask;
+//    int sa_flags;
+//};
 enum { SIGPIPE };
 
-int sigfillset(sigset_t *set);
-int sigaction(int sig, const struct sigaction *act, struct sigaction *oact);
+//int sigfillset(sigset_t *set);
+//int sigaction(int sig, const struct sigaction *act, struct sigaction *oact);
 /*<signal.h>*/
 
 char *strsep(char **stringp, const char *delim);
 
-enum { CLOCK_THREAD_CPUTIME_ID, CLOCK_REALTIME, CLOCK_MONOTONIC };
-int clock_gettime(int what, struct timespec *ti);
+//enum { CLOCK_THREAD_CPUTIME_ID, CLOCK_REALTIME, CLOCK_MONOTONIC };
+//int clock_gettime(int what, struct timespec *ti);
 
 enum { LOCK_EX, LOCK_NB };
 
@@ -38,7 +39,7 @@ int flock(int fd, int flag);
 #define F_SETFL 0
 #define F_GETFL 1
 
-int fcntl(int fd, int cmd, long arg); 
+//int fcntl(int fd, int cmd, long arg);
 
 #define random rand
 #define srandom srand
@@ -55,13 +56,13 @@ struct event {
 	bool write;
 };
 
-bool sp_invalid(poll_fd fd);
-poll_fd sp_create();
-void sp_release(poll_fd fd);
-int sp_add(poll_fd fd, int sock, void *ud);
-void sp_del(poll_fd fd, int sock);
-void sp_write(poll_fd, int sock, void *ud, bool enable);
-int sp_wait(poll_fd, struct event *e, int max);
+bool sp_invalid(int fd);
+int sp_create();
+void sp_release(int fd);
+int sp_add(int fd, int sock, void *ud);
+void sp_del(int fd, int sock);
+void sp_write(int fd, int sock, void *ud, bool enable);
+int sp_wait(int fd, struct event *e, int max);
 void sp_nonblocking(int sock);
 
 int write_extend_socket(int fd, const void *buffer, size_t sz);
@@ -89,6 +90,6 @@ int nusleep(unsigned long ul);
 #define recvfrom(s, buf, len, flags, from, fromlen) recvfrom_extend_voidptr(s, buf, len, flags, from, fromlen)
 #endif
 
-__declspec(dllimport) int __stdcall gethostname(char *buffer, int len);
+//__declspec(dllimport) int __stdcall gethostname(char *buffer, int len);
 
 #endif

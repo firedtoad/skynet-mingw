@@ -1,6 +1,5 @@
 #include "epoll.h"
 #include <Winsock2.h>
-#include <conio.h>
 #include <errno.h>
 #include <assert.h>
 
@@ -19,6 +18,21 @@ struct epoll_fd
     struct fd_t* fds;
     CRITICAL_SECTION lock;
 };
+static struct epoll_fd *g_efds[FD_SETSIZE]={0};
+static int next_fd=0;
+static int epoll_next_fd()
+{
+    if(g_efds[++next_fd]==NULL)
+    {
+        return next_fd;
+    }
+    return -1;
+}
+
+static struct  epoll_fd* get_fd_by_id(int efd)
+{
+    return g_efds[efd];
+}
 
 int epoll_startup()
 {
@@ -31,7 +45,7 @@ http://linux.die.net/man/2/epoll_create
 */
 int epoll_create(int size)
 {
-    assert(sizeof(struct epoll_fd*) <= sizeof(int));
+//    assert(sizeof(struct epoll_fd*) <= sizeof(int));
 
     if(size < 0 || size > FD_SETSIZE) {
         errno = EINVAL;
@@ -50,8 +64,9 @@ int epoll_create(int size)
     for (int i = 0; i < size; ++i) {
         epoll_fd->fds[i].fd = INVALID_SOCKET;
     }
-
-    return (int)epoll_fd;
+    int next_fd=epoll_next_fd();
+    g_efds[next_fd]=epoll_fd;
+    return next_fd;
 }
 
 
@@ -117,7 +132,8 @@ http://linux.die.net/man/2/epoll_ctl
 int epoll_ctl(int epfd, int opcode, int fd, struct epoll_event* event)
 {
     int error = ENOENT;
-    struct epoll_fd* epoll_fd = (struct epoll_fd*)epfd;
+//    struct epoll_fd* epoll_fd = (struct epoll_fd*)epfd;
+    struct epoll_fd* epoll_fd = get_fd_by_id(epfd);
     EnterCriticalSection(&epoll_fd->lock);
     switch (opcode) {
         case EPOLL_CTL_ADD:
@@ -148,13 +164,13 @@ static void epoll_wait_init(struct epoll_fd* epoll_fd)
         if (fd_t->fd == INVALID_SOCKET)
             continue;
 
-        if (fd_t->epoll_event.events & EPOLLIN || fd_t->epoll_event.events & EPOLLPRI)
+        if ((fd_t->epoll_event.events & EPOLLIN) || (fd_t->epoll_event.events & EPOLLPRI))
             FD_SET(fd_t->fd, &epoll_fd->readfds);   
 
         if (fd_t->epoll_event.events & EPOLLOUT)
             FD_SET(fd_t->fd, &epoll_fd->writefds);  
 
-        if (fd_t->epoll_event.events & EPOLLERR || fd_t->epoll_event.events & EPOLLRDHUP)
+        if ((fd_t->epoll_event.events & EPOLLERR) || (fd_t->epoll_event.events & EPOLLRDHUP))
             FD_SET(fd_t->fd, &epoll_fd->exceptfds);   
     }    
 }
@@ -202,7 +218,8 @@ http://linux.die.net/man/2/epoll_wait
 */
 int epoll_wait(int epfd, struct epoll_event* events, int maxevents, int timeout)
 {
-    struct epoll_fd* epoll_fd = (struct epoll_fd*)epfd;
+//    struct epoll_fd* epoll_fd = (struct epoll_fd*)epfd;
+    struct epoll_fd* epoll_fd = get_fd_by_id(epfd);
 
     EnterCriticalSection(&epoll_fd->lock);
     epoll_wait_init(epoll_fd);
@@ -227,10 +244,13 @@ int epoll_wait(int epfd, struct epoll_event* events, int maxevents, int timeout)
 
 int epoll_close(int epfd)
 {
-    struct epoll_fd* epoll_fd = (struct epoll_fd*)epfd;
+//    struct epoll_fd* epoll_fd = (struct epoll_fd*)epfd;
+    struct epoll_fd* epoll_fd = get_fd_by_id(epfd);
+
     DeleteCriticalSection(&epoll_fd->lock);
     free(epoll_fd->fds);
 	free(epoll_fd);
+	g_efds[epfd]=NULL;
     return 0;
 }
 

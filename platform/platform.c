@@ -58,14 +58,14 @@ int sigaction(int sig, const struct sigaction *act, struct sigaction *oact) {
   return 0;
 }
 
-int clock_gettime(int what, struct timespec *ti) {
-   __int64 wintime; 
-   GetSystemTimeAsFileTime((FILETIME*)&wintime);
-   wintime      -=116444736000000000;  //1jan1601 to 1jan1970
-   ti->tv_sec  =wintime / 10000000;           //seconds
-   ti->tv_nsec =wintime % 10000000 *100;      //nano-seconds
-   return 0;
-}
+//int clock_gettime(int what, struct timespec *ti) {
+//   __int64 wintime;
+//   GetSystemTimeAsFileTime((FILETIME*)&wintime);
+//   wintime      -=116444736000000000;  //1jan1601 to 1jan1970
+//   ti->tv_sec  =wintime / 10000000;           //seconds
+//   ti->tv_nsec =wintime % 10000000 *100;      //nano-seconds
+//   return 0;
+//}
 
 const char * inet_ntop(int af, const void *src, char *dst, size_t size) {
   if (af != AF_INET && af != AF_INET6)
@@ -116,17 +116,17 @@ int flock(int fd, int flag) {
   return 0;
 }
 
-int fcntl(int fd, int cmd, long arg) {
-  if (cmd == F_GETFL)
-    return 0;
-
-  if (cmd == F_SETFL && arg == O_NONBLOCK) {
-    u_long ulOption = 1;
-    ioctlsocket(fd, FIONBIO, &ulOption);
-  }
-  
-  return 1;
-}
+//int fcntl(int fd, int cmd, long arg) {
+//  if (cmd == F_GETFL)
+//    return 0;
+//
+//  if (cmd == F_SETFL && arg == O_NONBLOCK) {
+//    u_long ulOption = 1;
+//    ioctlsocket(fd, FIONBIO, &ulOption);
+//  }
+//
+//  return 1;
+//}
 int nusleep(unsigned long ul)
 {
   struct timespec req={0,ul*1000};

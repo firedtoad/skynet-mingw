@@ -5,19 +5,18 @@
 #define WIN32_LEAN_AND_MEAN
 #include <unistd.h>
 #include <stdbool.h>
-#include "sys/socket.h"
-
+#include <sys/socket.h> #include <time.h>
 #define HAVE_STRUCT_TIMESPEC
 
 /*<signal.h>*/
 #define	SIGHUP	1
-#define SA_RESTART	0x0002
+//#define SA_RESTART	0x0002
 //struct sigaction {
 //	void (*sa_handler)(int);
 //	sigset_t sa_mask;
 //    int sa_flags;
 //};
-enum { SIGPIPE };
+//enum { SIGPIPE };
 
 //int sigfillset(sigset_t *set);
 //int sigaction(int sig, const struct sigaction *act, struct sigaction *oact);

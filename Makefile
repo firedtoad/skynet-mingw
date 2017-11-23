@@ -14,7 +14,7 @@ LUA_INC ?= 3rd/lua
 
 PLATFORM_INC ?= platform
 
-CFLAGS := -g -O2 -Wall -I$(PLATFORM_INC) -I$(LUA_INC) $(MYCFLAGS)
+CFLAGS := -g -O2 -includeplatform.h -Wall -I$(PLATFORM_INC) -I$(LUA_INC) $(MYCFLAGS)
 # CFLAGS += -DUSE_PTHREAD_LOCK
 
 # link

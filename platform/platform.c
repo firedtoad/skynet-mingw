@@ -21,24 +21,23 @@ THE SOFTWARE.
 #include "platform.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <windows.h>
-#include <ws2tcpip.h>
+#include <Windows.h>
+#include <WS2tcpip.h>
 #include <errno.h>
 #include <fcntl.h>
+#include "epoll.h"
 
 #define IN6ADDRSZ 16 
 #define INT16SZ 2
 
-BOOL APIENTRY DllMain( HANDLE hModule, DWORD  ul_reason_for_call,  LPVOID lpReserved) {
+BOOL APIENTRY DllMain(HANDLE hModule, DWORD  ul_reason_for_call,  LPVOID lpReserved) {
   switch (ul_reason_for_call) {
-  case DLL_PROCESS_ATTACH: {
-    WSADATA wsadata;
-    WSAStartup(MAKEWORD(2, 2), &wsadata);
-  }
-  break;
+  case DLL_PROCESS_ATTACH: 
+    epoll_startup();
+    break;
 
   case DLL_PROCESS_DETACH:
-    WSACleanup();
+    epoll_cleanup();
     break;
   }
   return TRUE;
@@ -83,7 +82,7 @@ int sigaction(int sig, const struct sigaction *act, struct sigaction *oact) {
   return 0;
 }
 
-int clock_gettime(int what, struct timespec *ti) {
+int clock_gettime_platform(int what, struct timespec *ti) {
    __int64 wintime; 
    GetSystemTimeAsFileTime((FILETIME*)&wintime);
    wintime      -=116444736000000000;  //1jan1601 to 1jan1970

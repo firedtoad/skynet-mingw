@@ -10,3 +10,5 @@ service/
 service-src/
 skynet-src/
 test/
+/.project
+/.cproject

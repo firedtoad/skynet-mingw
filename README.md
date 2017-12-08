@@ -1,4 +1,4 @@
-# 关于skynet-mingw 5.3 分支
+# 关于skynet-cygwin 6.4 分支
 
 
 [skynet-mingw](https://github.com/dpull/skynet-mingw) 是[skynet](https://github.com/cloudwu/skynet)的windows平台的实现。其主要特点是：
@@ -8,7 +8,7 @@
 1. 自动更新skynet，自动构建，自动化测试，确保质量。
 
 ## 编译
-1. 安装 [MinGW5.3](http://sourceforge.net/projects/mingw/files/) 最新版本 5.3
+1. 安装 [cywgin](http://sourceforge.net/projects/mingw/files/) 最新版本 5.3
 1. 安装 `gcc g++`
 1. 安装 `pthread (dev)`
 1. 安装 `binutils`
